@@ -1,0 +1,56 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model User {
+  id        String   @id
+  username  String   @unique
+  avatar    String?
+  email     String?
+  createdAt DateTime @default(now())
+
+  progress  Progress[]
+
+  @@map("users")
+}
+
+model Level {
+  id            Int      @id @default(autoincrement())
+  title         String
+  description   String
+  type          String   // 'markdown' or 'qmd'
+  difficulty    Int      // 1-5
+  stage         Int      // 1-4
+  stageName     String
+  order         Int      // order within stage
+  content       String   // JSON string for task content
+  expectedAnswer String
+  hints         String   // JSON array of hints
+  maxScore      Int
+  taskType      String   // 'fill_blank', 'judge', 'code', 'choice', 'comprehensive'
+
+  progress      Progress[]
+
+  @@map("levels")
+}
+
+model Progress {
+  id          Int      @id @default(autoincrement())
+  userId      String
+  levelId     Int
+  completedAt DateTime @default(now())
+  score       Int
+  attempts    Int      @default(1)
+  code        String?  // user's submitted code
+
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  level       Level    @relation(fields: [levelId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, levelId])
+  @@map("progress")
+}
