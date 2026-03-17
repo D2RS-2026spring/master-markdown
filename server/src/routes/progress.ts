@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import { prisma } from '../prisma/client';
+import { validateAnswer } from '../validators';
 
 const router = Router();
 
@@ -54,49 +55,21 @@ router.post('/submit', async (req: any, res) => {
       return res.status(404).json({ error: 'Level not found' });
     }
 
-    // Validate answer based on task type
-    let isCorrect = false;
-    let score = 0;
+    // Use new validator
+    const result = validateAnswer(levelId, code, level);
 
-    const expectedPattern = new RegExp(level.expectedAnswer, 'i');
-
-    switch (level.taskType) {
-      case 'choice':
-        const content = JSON.parse(level.content);
-        isCorrect = parseInt(code) === content.correctAnswer;
-        break;
-      case 'judge':
-        isCorrect = code.toLowerCase() === level.expectedAnswer.toLowerCase();
-        break;
-      case 'fill_blank':
-        isCorrect = expectedPattern.test(code);
-        break;
-      case 'code':
-      case 'comprehensive':
-        isCorrect = expectedPattern.test(code);
-        break;
-      default:
-        isCorrect = expectedPattern.test(code);
-    }
-
-    if (isCorrect) {
-      // Check existing progress
-      const existingProgress = await prisma.progress.findUnique({
-        where: {
-          userId_levelId: {
-            userId,
-            levelId
-          }
-        }
-      });
-
-      let attempts = 1;
-      if (existingProgress) {
-        attempts = existingProgress.attempts + 1;
+    // Get existing progress
+    const existingProgress = await prisma.progress.findUnique({
+      where: {
+        userId_levelId: { userId, levelId }
       }
+    });
 
+    const attempts = (existingProgress?.attempts || 0) + 1;
+
+    if (result.correct) {
       // Calculate score
-      score = level.maxScore;
+      let score = level.maxScore;
       if (attempts > 3) {
         score = Math.floor(score * 0.9); // 10% penalty after 3 attempts
       }
@@ -104,10 +77,7 @@ router.post('/submit', async (req: any, res) => {
       // Save progress
       const progress = await prisma.progress.upsert({
         where: {
-          userId_levelId: {
-            userId,
-            levelId
-          }
+          userId_levelId: { userId, levelId }
         },
         update: {
           score: Math.max(score, existingProgress?.score || 0),
@@ -127,29 +97,26 @@ router.post('/submit', async (req: any, res) => {
         success: true,
         correct: true,
         score,
+        message: result.message,
         progress
       });
     } else {
       // Track attempt even if incorrect
-      const existingProgress = await prisma.progress.findUnique({
-        where: {
-          userId_levelId: {
-            userId,
-            levelId
-          }
-        }
-      });
-
       if (existingProgress) {
         await prisma.progress.update({
           where: {
-            userId_levelId: {
-              userId,
-              levelId
-            }
+            userId_levelId: { userId, levelId }
           },
+          data: { attempts }
+        });
+      } else {
+        await prisma.progress.create({
           data: {
-            attempts: existingProgress.attempts + 1
+            userId,
+            levelId,
+            score: 0,
+            attempts,
+            code
           }
         });
       }
@@ -157,7 +124,8 @@ router.post('/submit', async (req: any, res) => {
       res.json({
         success: true,
         correct: false,
-        message: '答案不正确，请重试'
+        message: result.message,
+        failures: result.failures
       });
     }
   } catch (error) {

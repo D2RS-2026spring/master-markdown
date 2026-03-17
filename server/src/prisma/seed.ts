@@ -31,19 +31,14 @@ const levels = [
     stageName: 'Markdown 基础',
     order: 2,
     content: JSON.stringify({
-      question: '在 Markdown 中，如何创建一个新的段落？',
-      options: [
-        '使用两个空格后换行',
-        '使用空行（即两个回车）',
-        '使用 <br> 标签',
-        '使用 \\n 转义字符'
-      ],
-      correctAnswer: 1
+      task: '创建两个段落，第一段内容为"这是第一段"，第二段内容为"这是第二段"。段落之间需要用空行分隔。',
+      template: '这是第一段\n这是第二段',
+      instruction: '在两段文字之间插入一个空行（按两次回车），使它们成为独立的段落'
     }),
-    expectedAnswer: '1',
-    hints: JSON.stringify(['段落之间需要一个空行来分隔']),
+    expectedAnswer: '这是第一段.*这是第二段',
+    hints: JSON.stringify(['Markdown 中段落之间需要一个空行（即两个回车）来分隔', '仅换一行不会产生新段落，需要空一行']),
     maxScore: 10,
-    taskType: 'choice'
+    taskType: 'code'
   },
   {
     id: 3,

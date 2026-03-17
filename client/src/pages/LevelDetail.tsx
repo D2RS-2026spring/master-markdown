@@ -182,7 +182,7 @@ export default function LevelDetail() {
                     {result.correct ? '回答正确！' : '回答错误'}
                   </p>
                   {result.message && (
-                    <p className="text-sm mt-1">{result.message}</p>
+                    <p className="text-sm mt-1 whitespace-pre-line">{result.message}</p>
                   )}
                   {result.correct && level.id < levels.length && (
                     <button
