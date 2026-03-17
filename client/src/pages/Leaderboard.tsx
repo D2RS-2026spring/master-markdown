@@ -52,7 +52,7 @@ export default function Leaderboard() {
       <div className="text-center mb-8">
         <TrophyIcon className="w-16 h-16 text-yellow-500 mx-auto mb-4" />
         <h1 className="text-3xl font-bold text-gray-900 mb-2">积分排行榜</h1>
-        <p className="text-gray-600">与全球玩家一起竞技，展示你的 Markdown 技能</p>
+        <p className="text-gray-600">与其他玩家一起竞技，展示你的 Markdown 技能</p>
       </div>
 
       {userRank && userRank.rank > 0 && (
@@ -73,57 +73,56 @@ export default function Leaderboard() {
         </div>
       )}
 
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-        <table className="w-full">
-          <thead className="bg-gray-50">
-            <tr>
-              <th className="px-6 py-4 text-left text-sm font-medium text-gray-500">排名</th>
-              <th className="px-6 py-4 text-left text-sm font-medium text-gray-500">玩家</th>
-              <th className="px-6 py-4 text-right text-sm font-medium text-gray-500">完成关卡</th>
-              <th className="px-6 py-4 text-right text-sm font-medium text-gray-500">总积分</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-gray-200">
-            {leaderboard.map((entry, index) => (
-              <tr
-                key={entry.id}
-                className={entry.id === user?.id ? 'bg-blue-50' : 'hover:bg-gray-50'}
-              >
-                <td className="px-6 py-4">
-                  <div className="flex items-center justify-center w-10">
-                    {getRankIcon(index + 1)}
-                  </div>
-                </td>
-                <td className="px-6 py-4">
-                  <div className="flex items-center space-x-3">
-                    {entry.avatar ? (
-                      <img
-                        src={entry.avatar}
-                        alt={entry.username}
-                        className="w-10 h-10 rounded-full"
-                      />
-                    ) : (
-                      <div className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center text-gray-600 font-medium">
-                        {entry.username[0]?.toUpperCase()}
-                      </div>
-                    )}
-                    <span className="font-medium text-gray-900">{entry.username}</span>
-                    {entry.id === user?.id && (
-                      <span className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded">你</span>
-                    )}
-                  </div>
-                </td>
-                <td className="px-6 py-4 text-right text-gray-600">
-                  {entry.completedLevels}
-                </td>
-                <td className="px-6 py-4 text-right">
-                  <span className="font-bold text-yellow-600">{entry.totalScore}</span>
-                </td>
+      {leaderboard.length === 0 ? (
+        <div className="text-center py-12 bg-white rounded-xl shadow-sm border border-gray-200">
+          <p className="text-gray-500 text-lg">还没有玩家上榜</p>
+          <p className="text-gray-400 text-sm mt-2">完成关卡获得积分，成为第一个上榜的玩家！</p>
+        </div>
+      ) : (
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+          <table className="w-full">
+            <thead className="bg-gray-50">
+              <tr>
+                <th className="px-6 py-4 text-left text-sm font-medium text-gray-500">排名</th>
+                <th className="px-6 py-4 text-left text-sm font-medium text-gray-500">玩家</th>
+                <th className="px-6 py-4 text-right text-sm font-medium text-gray-500">完成关卡</th>
+                <th className="px-6 py-4 text-right text-sm font-medium text-gray-500">总积分</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+            </thead>
+            <tbody className="divide-y divide-gray-200">
+              {leaderboard.map((entry, index) => (
+                <tr
+                  key={entry.id}
+                  className={entry.id === user?.id ? 'bg-blue-50' : 'hover:bg-gray-50'}
+                >
+                  <td className="px-6 py-4">
+                    <div className="flex items-center justify-center w-10">
+                      {getRankIcon(index + 1)}
+                    </div>
+                  </td>
+                  <td className="px-6 py-4">
+                    <div className="flex items-center space-x-3">
+                      <div className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center text-gray-600 font-medium">
+                        {entry.nickname[0]?.toUpperCase()}
+                      </div>
+                      <span className="font-medium text-gray-900">{entry.nickname}</span>
+                      {entry.id === user?.id && (
+                        <span className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded">你</span>
+                      )}
+                    </div>
+                  </td>
+                  <td className="px-6 py-4 text-right text-gray-600">
+                    {entry.completedLevels}
+                  </td>
+                  <td className="px-6 py-4 text-right">
+                    <span className="font-bold text-yellow-600">{entry.totalScore}</span>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
     </div>
   );
 }

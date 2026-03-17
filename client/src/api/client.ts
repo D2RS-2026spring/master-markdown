@@ -9,13 +9,10 @@ const api = axios.create({
   }
 });
 
-// Auth API
-export const authApi = {
-  getMe: () => api.get<{ user: User }>('/auth/me').then(r => r.data),
-  logout: () => api.get('/auth/logout').then(r => r.data),
-  loginWithGitHub: () => {
-    window.location.href = '/auth/github';
-  }
+// User API
+export const userApi = {
+  getMe: () => api.get<{ user: User }>('/user/me').then(r => r.data),
+  setNickname: (nickname: string) => api.post<{ user: User }>('/user/nickname', { nickname }).then(r => r.data),
 };
 
 // Levels API

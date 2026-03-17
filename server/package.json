@@ -17,23 +17,17 @@
   "description": "",
   "dependencies": {
     "@prisma/client": "^6.19.2",
-    "bcryptjs": "^3.0.3",
     "connect-sqlite3": "^0.9.16",
     "cors": "^2.8.6",
     "dotenv": "^17.3.1",
     "express": "^5.2.1",
-    "express-session": "^1.19.0",
-    "passport": "^0.7.0",
-    "passport-github2": "^0.1.12"
+    "express-session": "^1.19.0"
   },
   "devDependencies": {
-    "@types/bcryptjs": "^2.4.6",
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.6",
     "@types/express-session": "^1.18.2",
     "@types/node": "^25.4.0",
-    "@types/passport": "^1.0.17",
-    "@types/passport-github2": "^1.2.9",
     "nodemon": "^3.1.14",
     "prisma": "^6.19.2",
     "ts-node": "^10.9.2",

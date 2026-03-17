@@ -1,19 +1,15 @@
 import { useEffect } from 'react';
-import { useAuthStore } from '../stores/authStore';
 import { useGameStore } from '../stores/gameStore';
 import LevelCard from '../components/LevelCard';
 import { LockClosedIcon } from '@heroicons/react/24/solid';
 
 export default function Levels() {
-  const { isAuthenticated } = useAuthStore();
   const { levels, progress, fetchLevels, fetchProgress, getLevelStatus, getCurrentStage } = useGameStore();
 
   useEffect(() => {
     fetchLevels();
-    if (isAuthenticated) {
-      fetchProgress();
-    }
-  }, [fetchLevels, fetchProgress, isAuthenticated]);
+    fetchProgress();
+  }, [fetchLevels, fetchProgress]);
 
   const stages = [
     { id: 1, name: 'Markdown 基础', description: '掌握 Markdown 核心语法' },

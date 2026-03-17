@@ -3,19 +3,35 @@ import { prisma } from '../prisma/client';
 
 const router = Router();
 
-// Middleware to check authentication
-const isAuthenticated = (req: any, res: any, next: any) => {
-  if (req.isAuthenticated()) {
-    return next();
+// Helper: get or create user based on session
+const ensureUser = async (req: any): Promise<string> => {
+  if (!req.session.userId) {
+    req.session.userId = `user-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
   }
-  res.status(401).json({ error: 'Not authenticated' });
+
+  const userId = req.session.userId;
+
+  // Ensure user exists in DB
+  const existing = await prisma.user.findUnique({ where: { id: userId } });
+  if (!existing) {
+    await prisma.user.create({
+      data: {
+        id: userId,
+        nickname: '匿名玩家',
+      },
+    });
+  }
+
+  return userId;
 };
 
 // Get user's progress
-router.get('/', isAuthenticated, async (req: any, res) => {
+router.get('/', async (req: any, res) => {
   try {
+    const userId = await ensureUser(req);
+
     const progress = await prisma.progress.findMany({
-      where: { userId: req.user.id },
+      where: { userId },
       include: { level: true }
     });
     res.json(progress);
@@ -25,10 +41,10 @@ router.get('/', isAuthenticated, async (req: any, res) => {
 });
 
 // Submit level answer
-router.post('/submit', isAuthenticated, async (req: any, res) => {
+router.post('/submit', async (req: any, res) => {
   try {
     const { levelId, code } = req.body;
-    const userId = req.user.id;
+    const userId = await ensureUser(req);
 
     const level = await prisma.level.findUnique({
       where: { id: levelId }
@@ -151,10 +167,12 @@ router.post('/submit', isAuthenticated, async (req: any, res) => {
 });
 
 // Get user's total score
-router.get('/score', isAuthenticated, async (req: any, res) => {
+router.get('/score', async (req: any, res) => {
   try {
+    const userId = await ensureUser(req);
+
     const progress = await prisma.progress.findMany({
-      where: { userId: req.user.id }
+      where: { userId }
     });
 
     const totalScore = progress.reduce((sum, p) => sum + p.score, 0);

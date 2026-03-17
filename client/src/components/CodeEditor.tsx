@@ -1,4 +1,8 @@
-import Editor from '@monaco-editor/react';
+import Editor, { loader } from '@monaco-editor/react';
+import * as monaco from 'monaco-editor';
+
+// Use locally installed monaco-editor instead of CDN
+loader.config({ monaco });
 
 interface CodeEditorProps {
   value: string;

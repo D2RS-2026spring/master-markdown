@@ -1,5 +1,4 @@
 import { Link } from 'react-router-dom';
-import { useAuthStore } from '../stores/authStore';
 import {
   BookOpenIcon,
   TrophyIcon,
@@ -8,8 +7,6 @@ import {
 } from '@heroicons/react/24/outline';
 
 export default function Home() {
-  const { isAuthenticated } = useAuthStore();
-
   const features = [
     {
       icon: BookOpenIcon,
@@ -46,29 +43,12 @@ export default function Home() {
         </p>
 
         <div className="flex justify-center space-x-4">
-          {isAuthenticated ? (
-            <Link
-              to="/levels"
-              className="bg-blue-600 text-white px-8 py-3 rounded-lg text-lg font-semibold hover:bg-blue-700 transition-colors"
-            >
-              开始闯关
-            </Link>
-          ) : (
-            <>
-              <button
-                onClick={() => window.location.href = '/auth/github'}
-                className="bg-gray-900 text-white px-8 py-3 rounded-lg text-lg font-semibold hover:bg-gray-800 transition-colors"
-              >
-                GitHub 登录
-              </button>
-              <Link
-                to="/levels"
-                className="bg-white text-gray-900 border-2 border-gray-300 px-8 py-3 rounded-lg text-lg font-semibold hover:border-gray-400 transition-colors"
-              >
-                试玩
-              </Link>
-            </>
-          )}
+          <Link
+            to="/levels"
+            className="bg-blue-600 text-white px-8 py-3 rounded-lg text-lg font-semibold hover:bg-blue-700 transition-colors"
+          >
+            开始闯关
+          </Link>
         </div>
       </div>
 

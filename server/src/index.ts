@@ -1,10 +1,9 @@
 import express from 'express';
 import session from 'express-session';
-import passport from 'passport';
 import cors from 'cors';
 import dotenv from 'dotenv';
 
-import authRoutes from './routes/auth';
+import userRoutes from './routes/user';
 import levelRoutes from './routes/levels';
 import progressRoutes from './routes/progress';
 import leaderboardRoutes from './routes/leaderboard';
@@ -30,18 +29,17 @@ app.use(session({
   }),
   secret: process.env.SESSION_SECRET || 'your-secret-key',
   resave: false,
-  saveUninitialized: false,
+  saveUninitialized: true, // Create session for all visitors
   cookie: {
     secure: process.env.NODE_ENV === 'production',
-    maxAge: 24 * 60 * 60 * 1000 // 24 hours
+    maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days for anonymous users
+    httpOnly: true,
+    sameSite: 'lax'
   }
 }));
 
-app.use(passport.initialize());
-app.use(passport.session());
-
 // Routes
-app.use('/auth', authRoutes);
+app.use('/api/user', userRoutes);
 app.use('/api/levels', levelRoutes);
 app.use('/api/progress', progressRoutes);
 app.use('/api/leaderboard', leaderboardRoutes);

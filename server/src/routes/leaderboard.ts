@@ -16,11 +16,11 @@ router.get('/', async (req, res) => {
     const leaderboard = users
       .map(user => ({
         id: user.id,
-        username: user.username,
-        avatar: user.avatar,
+        nickname: user.nickname,
         totalScore: user.progress.reduce((sum, p) => sum + p.score, 0),
         completedLevels: user.progress.length
       }))
+      .filter(u => u.totalScore > 0) // Only show users who have scored
       .sort((a, b) => b.totalScore - a.totalScore)
       .slice(0, 100); // Top 100
 
@@ -44,11 +44,11 @@ router.get('/rank/:userId', async (req, res) => {
     const sortedUsers = users
       .map(user => ({
         id: user.id,
-        username: user.username,
-        avatar: user.avatar,
+        nickname: user.nickname,
         totalScore: user.progress.reduce((sum, p) => sum + p.score, 0),
         completedLevels: user.progress.length
       }))
+      .filter(u => u.totalScore > 0)
       .sort((a, b) => b.totalScore - a.totalScore);
 
     const rank = sortedUsers.findIndex(u => u.id === userId) + 1;

@@ -1,8 +1,6 @@
 export interface User {
   id: string;
-  username: string;
-  avatar?: string;
-  email?: string;
+  nickname: string;
   createdAt: string;
 }
 
@@ -43,8 +41,7 @@ export interface Progress {
 
 export interface LeaderboardEntry {
   id: string;
-  username: string;
-  avatar?: string;
+  nickname: string;
   totalScore: number;
   completedLevels: number;
 }

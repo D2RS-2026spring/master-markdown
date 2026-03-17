@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useGameStore } from '../stores/gameStore';
-import { useAuthStore } from '../stores/authStore';
 import CodeEditor from '../components/CodeEditor';
 import MarkdownPreview from '../components/MarkdownPreview';
 import type { LevelContent } from '../types';
@@ -16,7 +15,6 @@ import {
 export default function LevelDetail() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { isAuthenticated } = useAuthStore();
   const { levels, progress, fetchLevels, submitAnswer, getLevelStatus } = useGameStore();
 
   const [code, setCode] = useState('');
@@ -51,11 +49,6 @@ export default function LevelDetail() {
   const hints: string[] = JSON.parse(level.hints);
 
   const handleSubmit = async () => {
-    if (!isAuthenticated) {
-      alert('请先登录');
-      return;
-    }
-
     setIsSubmitting(true);
     const response = await submitAnswer(level.id, code);
     setResult(response);

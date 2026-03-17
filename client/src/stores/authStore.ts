@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import type { User } from '../types';
-import { authApi } from '../api/client';
+import { userApi } from '../api/client';
 
 interface AuthState {
   user: User | null;
@@ -8,8 +8,7 @@ interface AuthState {
   isAuthenticated: boolean;
   error: string | null;
   fetchUser: () => Promise<void>;
-  logout: () => Promise<void>;
-  login: () => void;
+  setNickname: (nickname: string) => Promise<void>;
 }
 
 export const useAuthStore = create<AuthState>((set) => ({
@@ -21,23 +20,32 @@ export const useAuthStore = create<AuthState>((set) => ({
   fetchUser: async () => {
     try {
       set({ isLoading: true, error: null });
-      const { user } = await authApi.getMe();
-      set({ user, isAuthenticated: true, isLoading: false });
+      const data = await userApi.getMe();
+      set({
+        user: data.user,
+        isAuthenticated: true,
+        isLoading: false,
+      });
     } catch (error) {
-      set({ user: null, isAuthenticated: false, isLoading: false });
+      console.error('Failed to fetch user:', error);
+      set({
+        user: null,
+        isAuthenticated: false,
+        isLoading: false,
+        error: '无法连接到服务器',
+      });
     }
   },
 
-  logout: async () => {
+  setNickname: async (nickname: string) => {
     try {
-      await authApi.logout();
-      set({ user: null, isAuthenticated: false });
-    } catch (error) {
-      set({ error: 'Logout failed' });
+      set({ error: null });
+      const data = await userApi.setNickname(nickname);
+      set({ user: data.user });
+    } catch (error: any) {
+      const message = error.response?.data?.error || '设置昵称失败';
+      set({ error: message });
+      throw new Error(message);
     }
   },
-
-  login: () => {
-    authApi.loginWithGitHub();
-  }
 }));

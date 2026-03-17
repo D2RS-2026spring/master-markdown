@@ -9,9 +9,7 @@ datasource db {
 
 model User {
   id        String   @id
-  username  String   @unique
-  avatar    String?
-  email     String?
+  nickname  String   @default("匿名玩家")
   createdAt DateTime @default(now())
 
   progress  Progress[]
