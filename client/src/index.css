@@ -62,3 +62,13 @@ body {
 .animate-fade-in-up {
   animation: fade-in-up 0.5s ease-out both;
 }
+
+/* Slow bounce for achievement icon */
+@keyframes bounce-slow {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-12px); }
+}
+
+.animate-bounce-slow {
+  animation: bounce-slow 2s ease-in-out infinite;
+}

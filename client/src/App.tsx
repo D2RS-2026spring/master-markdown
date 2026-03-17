@@ -7,6 +7,8 @@ import Levels from './pages/Levels';
 import LevelDetail from './pages/LevelDetail';
 import Profile from './pages/Profile';
 import Leaderboard from './pages/Leaderboard';
+import StageComplete from './pages/StageComplete';
+import Achievement from './pages/Achievement';
 
 function App() {
   const { fetchUser } = useAuthStore();
@@ -22,6 +24,8 @@ function App() {
           <Route index element={<Home />} />
           <Route path="levels" element={<Levels />} />
           <Route path="levels/:id" element={<LevelDetail />} />
+          <Route path="stages/:stageId/complete" element={<StageComplete />} />
+          <Route path="achievement" element={<Achievement />} />
           <Route path="profile" element={<Profile />} />
           <Route path="leaderboard" element={<Leaderboard />} />
         </Route>

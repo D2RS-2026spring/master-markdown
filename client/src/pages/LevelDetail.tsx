@@ -73,7 +73,7 @@ function Toast({ message, type, onClose }: { message: string; type: 'error' | 's
 export default function LevelDetail() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { levels, progress, fetchLevels, submitAnswer, getLevelStatus } = useGameStore();
+  const { levels, progress, fetchLevels, submitAnswer, getLevelStatus, isLastLevelInStage, isStageComplete, isAllComplete } = useGameStore();
 
   const [code, setCode] = useState('');
   const [result, setResult] = useState<{ correct: boolean; message?: string } | null>(null);
@@ -141,10 +141,21 @@ export default function LevelDetail() {
     }
   };
 
+  const isLastInStage = level ? isLastLevelInStage(level.id) : false;
+
   const goToNextLevel = () => {
-    const nextLevel = levels.find(l => l.id === level.id + 1);
-    if (nextLevel) {
-      navigate(`/levels/${nextLevel.id}`);
+    if (isLastInStage && level) {
+      // Check if this was the last stage
+      if (level.stage === 4) {
+        navigate('/achievement');
+      } else {
+        navigate(`/stages/${level.stage}/complete`);
+      }
+    } else {
+      const nextLevel = levels.find(l => l.id === level!.id + 1);
+      if (nextLevel) {
+        navigate(`/levels/${nextLevel.id}`);
+      }
     }
   };
 
@@ -276,12 +287,18 @@ export default function LevelDetail() {
                   {result.message && (
                     <p className="text-sm mt-1 whitespace-pre-line">{result.message}</p>
                   )}
-                  {level.id < levels.length && (
+                  {level.id <= levels.length && (
                     <button
                       onClick={goToNextLevel}
-                      className="mt-3 text-sm bg-white px-3 py-1 rounded border border-current hover:bg-gray-50 transition-colors"
+                      className={`mt-3 text-sm px-3 py-1 rounded border border-current transition-colors ${
+                        isLastInStage
+                          ? 'bg-gradient-to-r from-yellow-50 to-orange-50 hover:from-yellow-100 hover:to-orange-100 text-orange-700 border-orange-300'
+                          : 'bg-white hover:bg-gray-50'
+                      }`}
                     >
-                      进入下一关 →
+                      {isLastInStage
+                        ? (level.stage === 4 ? '🏆 查看最终成就' : '📊 查看阶段总结')
+                        : '进入下一关 →'}
                     </button>
                   )}
                 </div>

@@ -1,10 +1,13 @@
 import { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useGameStore } from '../stores/gameStore';
 import LevelCard from '../components/LevelCard';
 import { LockClosedIcon } from '@heroicons/react/24/solid';
+import { BookOpenIcon, TrophyIcon } from '@heroicons/react/24/outline';
 
 export default function Levels() {
-  const { levels, progress, fetchLevels, fetchProgress, getLevelStatus, getCurrentStage } = useGameStore();
+  const navigate = useNavigate();
+  const { levels, progress, fetchLevels, fetchProgress, getLevelStatus, getCurrentStage, isStageComplete, isAllComplete } = useGameStore();
 
   useEffect(() => {
     fetchLevels();
@@ -30,6 +33,18 @@ export default function Levels() {
         </p>
       </div>
 
+      {/* Achievement banner when all complete */}
+      {isAllComplete() && (
+        <button
+          onClick={() => navigate('/achievement')}
+          className="w-full mb-8 p-5 bg-gradient-to-r from-yellow-400 via-orange-400 to-red-400 rounded-xl text-white flex items-center justify-center space-x-3 hover:from-yellow-500 hover:via-orange-500 hover:to-red-500 transition-all shadow-lg hover:shadow-xl active:scale-[0.99]"
+        >
+          <TrophyIcon className="w-6 h-6" />
+          <span className="text-lg font-bold">🎉 恭喜通关！点击查看你的成就</span>
+          <TrophyIcon className="w-6 h-6" />
+        </button>
+      )}
+
       <div className="space-y-12">
         {stages.map((stage) => {
           const stageLevels = levels.filter(l => l.stage === stage.id);
@@ -48,8 +63,19 @@ export default function Levels() {
                     <p className="text-gray-500 text-sm">{stage.description}</p>
                   </div>
                 </div>
-                <div className="text-sm text-gray-500">
-                  {completedInStage} / {stageLevels.length} 完成
+                <div className="flex items-center space-x-3">
+                  {isStageComplete(stage.id) && (
+                    <button
+                      onClick={() => navigate(`/stages/${stage.id}/complete`)}
+                      className="flex items-center space-x-1 text-sm text-blue-600 hover:text-blue-800 transition-colors"
+                    >
+                      <BookOpenIcon className="w-4 h-4" />
+                      <span>复习</span>
+                    </button>
+                  )}
+                  <div className="text-sm text-gray-500">
+                    {completedInStage} / {stageLevels.length} 完成
+                  </div>
                 </div>
               </div>
 
