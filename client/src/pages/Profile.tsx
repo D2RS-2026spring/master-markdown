@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 import { CheckCircleIcon, PlayIcon, PencilIcon } from '@heroicons/react/24/solid';
 
 export default function Profile() {
-  const { user, setNickname } = useAuthStore();
+  const { user, setNickname, isAnonymous, loginWithGithub, logout } = useAuthStore();
   const { levels, progress, totalScore, completedLevels, fetchLevels, fetchProgress } = useGameStore();
 
   const [isEditingNickname, setIsEditingNickname] = useState(false);
@@ -112,6 +112,23 @@ export default function Profile() {
             <p className="text-gray-500 text-sm mb-4">
               设置昵称后，你的名字将显示在排行榜上
             </p>
+            <div className="mb-4">
+              {isAnonymous ? (
+                <button
+                  onClick={() => loginWithGithub('/profile')}
+                  className="bg-gray-900 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-black transition-colors"
+                >
+                  使用 GitHub 登录（保留当前进度）
+                </button>
+              ) : (
+                <button
+                  onClick={() => logout()}
+                  className="bg-gray-100 text-gray-700 px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-200 transition-colors"
+                >
+                  退出登录
+                </button>
+              )}
+            </div>
             <div className="flex items-center space-x-6">
               <div className="text-center">
                 <div className="text-3xl font-bold text-yellow-600">{totalScore}</div>

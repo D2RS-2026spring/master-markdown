@@ -5,7 +5,7 @@ import { UserCircleIcon } from '@heroicons/react/24/solid';
 
 export default function Navbar() {
   const { totalScore, completedLevels } = useGameStore();
-  const { user } = useAuthStore();
+  const { user, isAnonymous, loginWithGithub } = useAuthStore();
 
   return (
     <nav className="bg-white shadow-sm border-b border-gray-200">
@@ -33,6 +33,15 @@ export default function Navbar() {
                 <span className="text-green-700 font-bold">{completedLevels}</span>
               </div>
             </div>
+
+            {isAnonymous && (
+              <button
+                onClick={() => loginWithGithub('/profile')}
+                className="bg-gray-900 text-white px-3 py-1.5 rounded-lg text-sm font-medium hover:bg-black transition-colors"
+              >
+                GitHub 登录
+              </button>
+            )}
 
             <Link
               to="/profile"
