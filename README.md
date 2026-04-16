@@ -62,7 +62,10 @@ cp .env.example .env
 编辑 `.env` 文件：
 
 - `GITHUB_CLIENT_ID` 和 `GITHUB_CLIENT_SECRET`: 从 GitHub OAuth App 获取
+- `GITHUB_CALLBACK_URL`: 如 `http://localhost:3001/api/auth/github/callback`
 - `SESSION_SECRET`: 设置一个随机字符串作为 session 密钥
+- `CLIENT_URL`: 前端地址（例如 `http://localhost:3000` 或线上域名）
+- `COOKIE_SAME_SITE`: 同域用 `lax`，跨域前后端（例如前端 vercel + `api.bio-spring.top`）请设置 `none`
 
 创建 GitHub OAuth App:
 
@@ -71,8 +74,19 @@ cp .env.example .env
 3. 填写应用信息:
    - Application name: MD Master
    - Homepage URL: http://localhost:3000
-   - Authorization callback URL: http://localhost:3001/auth/github/callback
+   - Authorization callback URL: http://localhost:3001/api/auth/github/callback
 4. 创建后获取 Client ID 和 Client Secret
+
+
+### 2.1 前端连接到你的 API 服务器
+
+在 `client/.env` 中配置：
+
+```bash
+VITE_API_BASE_URL=https://api.bio-spring.top/api
+```
+
+前端会把用户登录态与关卡进度都写入你配置的后端（Cookie + `/api/progress/*`）。
 
 ### 3. 初始化数据库
 
